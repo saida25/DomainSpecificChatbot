@@ -1,0 +1,142 @@
+# rasa_bot/data/nlu.yml
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - moin
+    - hey there
+    - let's go
+    - hey dude
+    - goodmorning
+    - goodevening
+    - good afternoon
+
+- intent: goodbye
+  examples: |
+    - cu
+    - good by
+    - cee you later
+    - good night
+    - bye
+    - goodbye
+    - have a nice day
+    - see you around
+    - bye bye
+    - see you later
+
+- intent: affirm
+  examples: |
+    - yes
+    - y
+    - indeed
+    - of course
+    - that sounds good
+    - correct
+
+- intent: deny
+  examples: |
+    - no
+    - n
+    - never
+    - I don't think so
+    - don't like that
+    - no way
+    - not really
+
+- intent: mood_great
+  examples: |
+    - perfect
+    - great
+    - amazing
+    - feeling like a king
+    - wonderful
+    - I am feeling very good
+    - I am great
+    - I am amazing
+    - I am going to save the world
+    - super stoked
+    - extremely good
+    - so so perfect
+    - so good
+    - so perfect
+
+- intent: mood_unhappy
+  examples: |
+    - my day was horrible
+    - I am sad
+    - I don't feel very well
+    - I am disappointed
+    - super sad
+    - I'm so sad
+    - sad
+    - very sad
+    - unhappy
+    - not good
+    - not very good
+    - extremly sad
+    - so saad
+    - so sad
+
+- intent: bot_challenge
+  examples: |
+    - are you a bot?
+    - are you a human?
+    - am I talking to a bot?
+    - am I talking to a human?
+
+# Medical FAQ Intents
+- intent: ask_symptoms_covid
+  examples: |
+    - what are symptoms of covid
+    - how do I know if I have coronavirus
+    - signs of covid infection
+    - what does covid feel like
+    - covid symptoms
+
+- intent: ask_prevention_covid
+  examples: |
+    - how to prevent covid
+    - ways to avoid coronavirus
+    - covid prevention methods
+    - how not to get covid
+    - protect myself from covid
+
+- intent: ask_treatment_covid
+  examples: |
+    - how to treat covid
+    - covid treatment options
+    - what to do if I have coronavirus
+    - medicine for covid
+    - home remedies for covid
+
+# IT Helpdesk Intents
+- intent: password_reset
+  examples: |
+    - I forgot my password
+    - how to reset password
+    - password reset help
+    - can't login to my account
+    - locked out of my account
+
+- intent: network_issues
+  examples: |
+    - internet not working
+    - wifi connection problems
+    - network connectivity issues
+    - can't connect to internet
+    - slow internet connection
+
+- intent: software_installation
+  examples: |
+    - how to install software
+    - software installation help
+    - can't install program
+    - installation failed
+    - need help installing application

@@ -1,0 +1,72 @@
+# rasa_bot/data/stories.yml
+version: "3.1"
+
+stories:
+- story: happy path
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_great
+  - action: utter_happy
+
+- story: sad path 1
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: affirm
+  - action: utter_happy
+
+- story: sad path 2
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: deny
+  - action: utter_goodbye
+
+- story: say goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- story: bot challenge
+  steps:
+  - intent: bot_challenge
+  - action: utter_iamabot
+
+# Medical FAQ Stories
+- story: covid symptoms inquiry
+  steps:
+  - intent: ask_symptoms_covid
+  - action: utter_covid_symptoms
+
+- story: covid prevention inquiry
+  steps:
+  - intent: ask_prevention_covid
+  - action: utter_covid_prevention
+
+- story: covid treatment inquiry
+  steps:
+  - intent: ask_treatment_covid
+  - action: utter_covid_treatment
+
+# IT Helpdesk Stories
+- story: password reset request
+  steps:
+  - intent: password_reset
+  - action: utter_password_reset_help
+
+- story: network issues report
+  steps:
+  - intent: network_issues
+  - action: utter_network_troubleshooting
+
+- story: software installation help
+  steps:
+  - intent: software_installation
+  - action: utter_software_installation_help

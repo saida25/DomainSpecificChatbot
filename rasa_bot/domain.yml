@@ -1,0 +1,59 @@
+# rasa_bot/domain.yml
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - mood_great
+  - mood_unhappy
+  - bot_challenge
+  - ask_symptoms_covid
+  - ask_prevention_covid
+  - ask_treatment_covid
+  - password_reset
+  - network_issues
+  - software_installation
+
+responses:
+  utter_greet:
+  - text: "Hey! How are you?"
+  
+  utter_cheer_up:
+  - text: "Here is something to cheer you up:"
+    image: "https://i.imgur.com/nGF1K8f.jpg"
+  
+  utter_did_that_help:
+  - text: "Did that help you?"
+  
+  utter_happy:
+  - text: "Great, carry on!"
+  
+  utter_goodbye:
+  - text: "Bye"
+  
+  utter_iamabot:
+  - text: "I am a bot, powered by Rasa."
+  
+  utter_covid_symptoms:
+  - text: "Common COVID-19 symptoms include fever, cough, tiredness, and loss of taste or smell. More severe symptoms include difficulty breathing, chest pain, and loss of speech or mobility. If you experience severe symptoms, seek medical attention immediately."
+  
+  utter_covid_prevention:
+  - text: "To prevent COVID-19: 1) Get vaccinated, 2) Wear a mask in crowded places, 3) Practice physical distancing, 4) Wash your hands regularly, 5) Avoid poorly ventilated spaces, 6) Stay home if you feel unwell."
+  
+  utter_covid_treatment:
+  - text: "Most people with COVID-19 have mild illness and can recover at home. Get plenty of rest, stay hydrated, and take over-the-counter medicines like acetaminophen. Seek emergency care if you have trouble breathing, persistent chest pain, or other severe symptoms."
+  
+  utter_password_reset_help:
+  - text: "To reset your password, go to the login page and click 'Forgot Password'. Enter your email address and follow the instructions sent to your email. If you continue to have issues, contact IT support at it-help@company.com."
+  
+  utter_network_troubleshooting:
+  - text: "For network issues: 1) Restart your router and device, 2) Check if other devices can connect, 3) Verify your network settings, 4) Try connecting with an Ethernet cable if possible. If problems persist, contact network support at network-help@company.com."
+  
+  utter_software_installation_help:
+  - text: "For software installation: 1) Ensure you have administrator privileges, 2) Check system requirements, 3) Download the latest version from our software portal, 4) Disable antivirus temporarily during installation (remember to re-enable it). If installation fails, send the error message to software-support@company.com."
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
