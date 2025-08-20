@@ -1,0 +1,269 @@
+<!-- templates/chat.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Domain-Specific Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            height: 100vh;
+        }
+        
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .chat-header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+        }
+        
+        .user-message {
+            justify-content: flex-end;
+        }
+        
+        .bot-message {
+            justify-content: flex-start;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 18px;
+        }
+        
+        .user-message .message-content {
+            background-color: #DCF8C6;
+        }
+        
+        .bot-message .message-content {
+            background-color: #E8E8E8;
+        }
+        
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            display: flex;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            margin-right: 10px;
+        }
+        
+        .chat-input button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        .chat-input button:hover {
+            background-color: #45a049;
+        }
+        
+        .suggestions {
+            padding: 10px 15px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+        
+        .suggestion-chip {
+            display: inline-block;
+            background-color: #e8f5e8;
+            padding: 5px 12px;
+            margin: 5px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .suggestion-chip:hover {
+            background-color: #d4ecd4;
+        }
+        
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Domain-Specific Assistant</h2>
+            <p>Medical FAQ & IT Helpdesk Bot</p>
+        </div>
+        
+        <div class="suggestions">
+            <div class="suggestion-chip" onclick="sendSuggestion('What are COVID-19 symptoms?')">COVID Symptoms</div>
+            <div class="suggestion-chip" onclick="sendSuggestion('How to prevent COVID?')">COVID Prevention</div>
+            <div class="suggestion-chip" onclick="sendSuggestion('I forgot my password')">Password Reset</div>
+            <div class="suggestion-chip" onclick="sendSuggestion('Internet not working')">Network Issues</div>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot-message">
+                <div class="message-content">
+                    Hello! I'm a specialized assistant for medical FAQs and IT helpdesk questions. How can I help you today?
+                </div>
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typing-indicator">
+            Bot is typing...
+        </div>
+        
+        <div class="chat-input">
+            <input type="text" id="message-input" placeholder="Type your message here..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const sessionId = "{{ session_id }}";
+        const messageInput = document.getElementById('message-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const typingIndicator = document.getElementById('typing-indicator');
+        
+        // Load chat history
+        window.addEventListener('load', function() {
+            loadChatHistory();
+        });
+        
+        function loadChatHistory() {
+            fetch(`/api/chat_history/${sessionId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Clear initial bot message
+                        chatMessages.innerHTML = '';
+                        
+                        // Add all messages from history
+                        data.messages.forEach(msg => {
+                            addMessageToChat(msg.message, !msg.is_user);
+                        });
+                        
+                        // Scroll to bottom
+                        scrollToBottom();
+                    }
+                })
+                .catch(error => console.error('Error loading chat history:', error));
+        }
+        
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (message) {
+                addMessageToChat(message, true);
+                messageInput.value = '';
+                
+                // Show typing indicator
+                typingIndicator.style.display = 'block';
+                scrollToBottom();
+                
+                // Send message to server
+                fetch('/api/send_message/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Hide typing indicator
+                    typingIndicator.style.display = 'none';
+                    
+                    if (data.success) {
+                        addMessageToChat(data.bot_response, false);
+                    } else {
+                        addMessageToChat('Sorry, I encountered an error. Please try again.', false);
+                    }
+                })
+                .catch(error => {
+                    typingIndicator.style.display = 'none';
+                    addMessageToChat('Sorry, I encountered an error. Please try again.', false);
+                    console.error('Error:', error);
+                });
+            }
+        }
+        
+        function sendSuggestion(suggestion) {
+            messageInput.value = suggestion;
+            sendMessage();
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        function addMessageToChat(message, isUser) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = message;
+            
+            messageDiv.appendChild(contentDiv);
+            chatMessages.appendChild(messageDiv);
+            
+            scrollToBottom();
+        }
+        
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>
